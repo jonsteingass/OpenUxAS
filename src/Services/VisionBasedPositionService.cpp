@@ -118,6 +118,7 @@ bool VisionBasedPositionService::processReceivedLmcpMessage(std::unique_ptr<uxas
         //positionMessage->setVarianceZ(0.0);
         
         //Send the message
+        //sendSharedLmcpObjectBroadcastMessage(safeHeadingAction);
     }
     
     

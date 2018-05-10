@@ -1,0 +1,46 @@
+<MissionCommand Series="CMASI">
+  <WaypointList>
+    <Waypoint Series="CMASI">
+      <Number>101</Number>
+      <NextWaypoint>102</NextWaypoint>
+      <Speed>24</Speed>
+      <SpeedType>Airspeed</SpeedType>
+      <ClimbRate>0</ClimbRate>
+      <TurnType>FlyOver</TurnType>
+      <VehicleActionList>
+      </VehicleActionList>
+      <ContingencyWaypointA>0</ContingencyWaypointA>
+      <ContingencyWaypointB>0</ContingencyWaypointB>
+      <AssociatedTasks>
+      </AssociatedTasks>
+      <Latitude>39.344627567</Latitude>
+      <Longitude>-86.060963844</Longitude>
+      <Altitude>305</Altitude>
+      <AltitudeType>MSL</AltitudeType>
+    </Waypoint>
+    <Waypoint Series="CMASI">
+      <Number>102</Number>
+      <NextWaypoint>102</NextWaypoint>
+      <Speed>24</Speed>
+      <SpeedType>Airspeed</SpeedType>
+      <ClimbRate>0</ClimbRate>
+      <TurnType>FlyOver</TurnType>
+      <VehicleActionList>
+      </VehicleActionList>
+      <ContingencyWaypointA>0</ContingencyWaypointA>
+      <ContingencyWaypointB>0</ContingencyWaypointB>
+      <AssociatedTasks>
+      </AssociatedTasks>
+      <Latitude>39.332049703</Latitude>
+      <Longitude>-86.072836944</Longitude>
+      <Altitude>305</Altitude>
+      <AltitudeType>MSL</AltitudeType>
+    </Waypoint>
+  </WaypointList>
+  <FirstWaypoint>101</FirstWaypoint>
+  <CommandID>103</CommandID> 
+  <VehicleID>400</VehicleID>
+  <VehicleActionList>
+   </VehicleActionList>
+  <Status>Pending</Status>
+</MissionCommand>

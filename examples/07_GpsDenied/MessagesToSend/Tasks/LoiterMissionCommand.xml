@@ -1,0 +1,44 @@
+      <MissionCommand Series="CMASI">
+        <CommandID>100</CommandID>
+        <VehicleID>400</VehicleID>
+        <WaypointList>
+         <Waypoint Series="CMASI">
+           <Number>1</Number>
+           <NextWaypoint>1</NextWaypoint>
+           <Speed>24</Speed>
+           <SpeedType>Airspeed</SpeedType>
+           <ClimbRate>0</ClimbRate>
+           <TurnType>TurnShort</TurnType>
+           <VehicleActionList>
+            <LoiterAction Series="CMASI">
+              <LoiterType>VehicleDefault</LoiterType>
+              <Radius>304.8</Radius>
+              <Axis>0</Axis>
+              <Length>0</Length>
+              <Direction>VehicleDefault</Direction>
+              <Duration>0</Duration>
+              <Airspeed>24</Airspeed>
+              <Location>
+               <Location3D Series="CMASI">
+      <Latitude>39.344629275</Latitude>
+      <Longitude>-86.038240601</Longitude>
+      <Altitude>305</Altitude>
+      <AltitudeType>MSL</AltitudeType>
+               </Location3D>
+              </Location>
+              <AssociatedTaskList>
+              </AssociatedTaskList>
+            </LoiterAction>
+           </VehicleActionList>
+           <ContingencyWaypoint>0</ContingencyWaypoint>
+           <AssociatedTasks>
+           </AssociatedTasks>
+           <Latitude>39.344629275</Latitude>
+           <Longitude>-86.038240601</Longitude>
+           <Altitude>305</Altitude>
+           <AltitudeType>MSL</AltitudeType>
+         </Waypoint>
+        </WaypointList>
+        <FirstWaypoint>1</FirstWaypoint>
+        <Status>Pending</Status>
+      </MissionCommand>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE MDM SYSTEM 'MDM.DTD'>
+
+<!--
+        <h2>Introduction</h2>
+        TEAS message definitions.
+        <br/>
+        <p>These messages are defined in order to integrate OU's vision based navigation system into UxAS.</p>
+-->
+<MDM>
+    <SeriesName>TEAS</SeriesName>
+    <Namespace>uxas/projects/teas</Namespace>
+	<Version>1</Version>
+	
+	<EnumList>
+        <!-- Describes the GPS denied zone -->
+        <Enum Name="GPSSignalType">
+            <!-- Describes a reliable GPS signal-->
+            <Entry Name="Strong" Value="0"/>
+            <!-- Describes a signal that cuts in and out -->
+            <Entry Name="Partial" Value="1"/>
+            <!-- Describes a signal that is totally lost -->
+            <Entry Name="Dropped" Value="2"/>
+            
+        </Enum>
+	</EnumList>
+	
+    <StructList>
+		<!--
+			Describes if the vision based algorithm should be used, and which vehicle should be using it.
+		-->
+		<Struct Name="VisionBasedNavSwitch">
+			<!--
+				Determines if the vision based navigation is enabled. If this is set to true,
+				then the vision based navigation system controls the vehicle. If this is set to false,
+				the vehicle continues its operations normally.
+			-->
+			<Field Name="IsEnabled" Type="bool" Default="false" Units="None"/>
+		
+			<!--
+				The id of the vehicle that will be navigating with the vision based navigation algorithm.
+			-->
+			<Field Name="VehicleID" Type="int64" Units="None" Default="0"/>
+			
+			<!--Other fields can be added here to signify other constraints (like a particular gimbal or viewing angle). 
+			For more information, look at the LmcpGen project and navigate to src/doc/lmcp.html
+			-->
+			
+		</Struct>
+		<!--
+			Defines a GPSDeniedZone. This is based on the AbstractZone class.'
+			By relying on an AbstractZone, this causes a dependency on CMASI messages unless the AbstractZone is added to the TEAS message series.
+		-->
+        <Struct Name="GPSDeniedZone" Extends="AbstractZone" Series="CMASI">
+            <!--
+                The type of GPS signal <br/>
+            -->
+            <Field Name="GPSSignalType" Type="GPSSignalType" Units="None" />
+        </Struct>
+
+	<!--Describes the calculated position of the vehicle-->
+	<Struct Name="VisionBasedPosition" Extends="Location3D" Series="CMASI">
+		<!--Describes the varaince in the body x direction (positive out nose)-->
+		<Field Name="VarianceX"	Type="real32" Default="0"/>
+		<!--Describes the variance in the body y direction (positive out right wing) -->
+		<Field Name="VarianceY" Type="real32" Default="0"/>
+		<!--Describes the variance in the body z direction (positive downward) -->
+		<Field Name="VarianceZ" Type="real32" Default="0"/>
+	</Struct>
+    </StructList>
+</MDM>

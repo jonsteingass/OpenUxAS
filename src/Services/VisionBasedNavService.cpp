@@ -61,9 +61,6 @@ namespace uxas // uxas::
             if (!ndComponent.attribute("VehicleID").empty()) {
                 m_vehicleId = ndComponent.attribute("VehicleID").as_int64();
             }
-            if (!ndComponent.attribute("IsTestMode").empty()) {
-                m_isTestMode = ndComponent.attribute("IsTestMode").as_bool();
-            }
             if(!ndComponent.attribute("MinWaypointDistance").empty())
             {
                 m_minWaypointDistance = ndComponent.attribute("MinWaypointDistance").as_double();
@@ -125,49 +122,29 @@ namespace uxas // uxas::
 
             if (entityState && entityState->getID() == m_vehicleId) //when an entity state is received, check if within GPS Denied Zone, if it is then set stuff for vehicle safe heading action and send message
             {
+                //check if vehicle is in GPS denied zone
+
                 //first get lat long
                 auto entityLocation = entityState->getLocation();
                 double latitude = entityLocation->getLatitude();
                 double longitude = entityLocation->getLongitude();
 
-                //SHOULD ONLY HAPPEN IN TEST MODE? OTHERWISE VISIONBASEDPOSITION SHOULD BE USED TO ASSIGN NEXT WAYPOINT
-                if (!m_waypointList.empty())
-                {
-                    //even if not in gps denied zone, check the distance to switch to the next waypoint
-                    auto distance = distanceToNextWaypoint(latitude, longitude);
-
-                    std::cout << "The current distance is: " << distance << "\nThe min distance is: " << m_minWaypointDistance << std::endl;
-                    if (distance <= m_minWaypointDistance) {
-                        //get next waypoint if within the target distance
-                        m_currentWaypoint = getNextWaypointWithWaypointNumber(m_currentWaypoint.getNextWaypoint());
-                    }
-                }
                 // check if entity state's vehicle ID matches m_vehicleId and vehicle is within the Gps denied zone
-               if(isInGpsDeniedZone(latitude,longitude)) {// if ((entityState->getID() == m_vehicleId) && isWithinGpsDeniedZone(latitude, longitude)) {
+               if(isInGpsDeniedZone(latitude,longitude)) {
                     m_isInGpsDeniedZone = true;
-
-                    if(m_isTestMode)
-                    {
-                        //Set the desired heading for the safe heading action
-                        desiredHeading = angleToNextWaypoint(latitude, longitude);
-                        std::cout << "The desired heading angle is: " << desiredHeading << std::endl;
-                        //set the message to ready to send
-                        isReadyToSend = true;
-                    } else {
-                        //use the VisionBasedPosition message instead?
-                        //dont need an else here just need to handle the message
-                    }
-
-                } else { // if the vehicle just exited the GPS denied zone, then send a loiter action to the current waypoint.
-                    if (m_isInGpsDeniedZone && m_waypointList.size() > 0) //should also check if in test mode?
-                    {
-                        std::cout << "Just left the GPS denied zone" << std::endl;
+               }
+               else{
+                   if(m_isInGpsDeniedZone)
+                   {
+                       //just exited gps denied zone
+                       std::cout << "Vehicle [" << m_vehicleId << "] exited the GPS denied zone" << std::endl;
                         m_isInGpsDeniedZone = false;
                         
-                        //send loiter action at the current waypoint
+                        //send loiter action at the current waypoint when vehicle exits gps denied zone
                         sendLoiterAction(m_currentWaypoint);
-                    }
-                }
+                   }
+               }
+
             } else if (gpsDeniedZone) //when a gps denied zone is received, convert to polygon and save as member
             {
                 //make polygon from gpsDeniedZone
@@ -175,11 +152,40 @@ namespace uxas // uxas::
                 afrl::cmasi::AbstractGeometry *gpsGeo = gpsDeniedZone->getBoundary();
                 m_GpsDeniedPolygon = fromAbstractGeometry(gpsGeo); //get polygon from boundary of the GpsDeniedZone
             } else if (missionCommand) {
+                //assign waypoints from mission command
                 std::cout << "NEW MISSION COMMAND RECEIVED" << std::endl;
                 addWaypointsFromMissionCommandToWaypointList(*missionCommand);
-            } else if(visionBasedPosition && m_isTestMode == false)
+            } else if(visionBasedPosition && m_isInGpsDeniedZone && visionBasedPosition->getID() == m_vehicleId)
             {
-                //do some stuff with the vision based position message
+                //navigate with the vision based position message if true location (entity state) showed the vehicle is within gps denied zone.
+                
+                double latitude = visionBasedPosition->getLatitude();
+                double longitude = visionBasedPosition->getLongitude();
+
+                //set current waypoint as next waypoint if close to current waypoint.
+                if (!m_waypointList.empty())
+                {
+                    auto distance = distanceToNextWaypoint(latitude, longitude);
+
+                    std::cout << "The current distance is: " << distance << "\nThe min distance is: " << m_minWaypointDistance << std::endl;
+                    if (distance <= m_minWaypointDistance) {
+                        m_currentWaypoint = getNextWaypointWithWaypointNumber(m_currentWaypoint.getNextWaypoint());
+                    }
+                    if(isInGpsDeniedZone(latitude, longitude))
+                    {
+                        desiredHeading = angleToNextWaypoint(latitude, longitude);
+                        std::cout << "The desired heading angle is: " << desiredHeading << std::endl;
+                        isReadyToSend = true;
+                    }
+                    else
+                    {
+                        std::cout << "Just left the GPS denied zone" << std::endl;
+                        m_isInGpsDeniedZone = false;
+                        
+                        //send loiter action at the current waypoint when vehicle exits gps denied zone
+                        sendLoiterAction(m_currentWaypoint);
+                    }
+                }
             }
 
             //send a safe heading action when ready
@@ -188,11 +194,10 @@ namespace uxas // uxas::
 
                 // send out a safe heading action that will be handled by the LoiterLeash service
                 auto safeHeadingAction = std::shared_ptr<uxas::messages::uxnative::SafeHeadingAction>(new uxas::messages::uxnative::SafeHeadingAction());
-                safeHeadingAction->setDesiredHeading(desiredHeading); //set the safe heading actions heading
+                safeHeadingAction->setDesiredHeading(desiredHeading); 
                 safeHeadingAction->setLoiterRadius(m_loiterRadius);
                 safeHeadingAction->setVehicleID(m_vehicleId); //set the vehicle commanded
                 sendSharedLmcpObjectBroadcastMessage(safeHeadingAction); //send the message
-                isReadyToSend = false;
             }
 
             return false;

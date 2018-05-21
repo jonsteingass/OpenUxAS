@@ -116,7 +116,7 @@
 #include "StatusReportService.h"
 #include "LoiterLeash.h"
 #include "VisionBasedNavService.h"
-#include "VisionBasedPositionService.h"
+#include "VisionBasedPositioningService.h"
 
 #endif  //UXAS_SERVICE_LIST_CODE_HEADERS
 #endif  //INCLUDE_SERVICE_HEADERS
@@ -192,7 +192,7 @@
 {auto svc = uxas::stduxas::make_unique<uxas::service::StatusReportService>();}
 {auto svc = uxas::stduxas::make_unique<uxas::service::LoiterLeash>();}
 {auto svc = uxas::stduxas::make_unique<uxas::service::VisionBasedNavService>();}
-{auto svc = uxas::stduxas::make_unique<uxas::service::VisionBasedPositionService>();}
+{auto svc = uxas::stduxas::make_unique<uxas::service::VisionBasedPositioningService>();}
 
 #endif  //REGISTER_SERVICE_CODE
 //////////////////////////////////////////////////////////

@@ -24,7 +24,7 @@ srcs_services = [
   'Test_SimulationTime.cpp',
   'WaypointPlanManagerService.cpp',
   'VisionBasedNavService.cpp',
-  'VisionBasedPositionService.cpp',
+  'VisionBasedPositioningService.cpp',
 ]
 
 incs_services = [

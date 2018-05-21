@@ -17,10 +17,12 @@
     <Service Type="WaypointPlanManagerService" VehicleID="400" NumberWaypointsToServe="15" NumberWaypointsOverlap="5"
              DefaultLoiterRadius_m="250"  param.turnType="FlyOver" AddLoiterToEndOfSegments="FALSE"
              AddLoiterToEndOfMission="FALSE" LoopBackToFirstTask="FALSE" GimbalPayloadId="1"/>
+
     <Service Type="PlanBuilderService" AssignmentStartPointLead_m="0.0"/>
 	
 	<!--ADD THE LOITER LEASH AND VISION BASED NAV SERVICES-->
-	<Service Type="VisionBasedNavService" VehicleID="400" IsTestMode="true" MinWaypointDistance="20" LoiterRadius="304.8" />
+	<Service Type="VisionBasedPositioningService" VehicleID="400" IsTestMode="true"/>
+	<Service Type="VisionBasedNavService" VehicleID="400" MinWaypointDistance="20" LoiterRadius="304.8" />
 	<Service Type="LoiterLeash" VehicleID="400" />
 	
     <Service Type="SendMessagesService" PathToMessageFiles="../MessagesToSend/">

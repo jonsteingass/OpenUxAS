@@ -13,12 +13,12 @@
  *
  * Created on March 17, 2017, 5:55 PM
  *
- * <Service Type="VisionBasedPositionService" VehicleId="0"/>
+ * <Service Type="VisionBasedPositionService" VehicleId="0" IsTestMode="false"/>
  * 
  */
 
 // include header for this service
-#include "VisionBasedPositionService.h"
+#include "VisionBasedPositioningService.h"
 
 #include "afrl/cmasi/EntityState.h"
 #include "uxas/projects/teas/VisionBasedPosition.h"
@@ -26,7 +26,8 @@
 #include <iostream>     // std::cout, cerr, etc
 
 // convenience definitions for the option strings
-#define VehicleId "VehicleId"
+#define VehicleId "VehicleID"
+#define TestMode "IsTestMode"
 
 // namespace definitions
 namespace uxas  // uxas::
@@ -35,25 +36,29 @@ namespace service   // uxas::service::
 {
 
 // this entry registers the service in the service creation registry
-VisionBasedPositionService::ServiceBase::CreationRegistrar<VisionBasedPositionService>
-VisionBasedPositionService::s_registrar(VisionBasedPositionService::s_registryServiceTypeNames());
+VisionBasedPositioningService::ServiceBase::CreationRegistrar<VisionBasedPositioningService>
+VisionBasedPositioningService::s_registrar(VisionBasedPositioningService::s_registryServiceTypeNames());
 
 // service constructor
-VisionBasedPositionService::VisionBasedPositionService()
-: ServiceBase(VisionBasedPositionService::s_typeName(), VisionBasedPositionService::s_directoryName()) { };
+VisionBasedPositioningService::VisionBasedPositioningService()
+: ServiceBase(VisionBasedPositioningService::s_typeName(), VisionBasedPositioningService::s_directoryName()) { };
 
 // service destructor
-VisionBasedPositionService::~VisionBasedPositionService() { };
+VisionBasedPositioningService::~VisionBasedPositioningService() { };
 
 
 //set up service based on xml attributes and subscribe to messages here
-bool VisionBasedPositionService::configure(const pugi::xml_node& ndComponent)
+bool VisionBasedPositioningService::configure(const pugi::xml_node& ndComponent)
 {
     bool isSuccess(true);
 
     if (!ndComponent.attribute(VehicleId).empty())
     {
         m_vehicleId = ndComponent.attribute(VehicleId).as_int();
+    }
+    if(!ndComponent.attribute(TestMode).empty())
+    {
+        m_isTestMode = ndComponent.attribute(TestMode).as_bool();
     }
 
     // subscribe to messages::
@@ -66,7 +71,7 @@ bool VisionBasedPositionService::configure(const pugi::xml_node& ndComponent)
 }
 
 //send message when intiialized
-bool VisionBasedPositionService::initialize()
+bool VisionBasedPositioningService::initialize()
 {
     // perform any required initialization before the service is started
     std::cout << "*** INITIALIZING:: Service[" << s_typeName() << "] Service Id[" << m_serviceId << "] with working directory [" << m_workDirectoryName << "] *** " << std::endl;
@@ -75,7 +80,7 @@ bool VisionBasedPositionService::initialize()
 }
 
 //send message when the service is starting
-bool VisionBasedPositionService::start()
+bool VisionBasedPositioningService::start()
 {
     // perform any actions required at the time the service starts
     std::cout << "*** STARTING:: Service[" << s_typeName() << "] Service Id[" << m_serviceId << "] with working directory [" << m_workDirectoryName << "] *** " << std::endl;
@@ -84,7 +89,7 @@ bool VisionBasedPositionService::start()
 };
 
 //print statement when service is terminating. Do some clean up here
-bool VisionBasedPositionService::terminate()
+bool VisionBasedPositioningService::terminate()
 {
     // perform any action required during service termination, before destructor is called.
     std::cout << "*** TERMINATING:: Service[" << s_typeName() << "] Service Id[" << m_serviceId << "] with working directory [" << m_workDirectoryName << "] *** " << std::endl;
@@ -93,7 +98,7 @@ bool VisionBasedPositionService::terminate()
 }
 
 //The meat of a service. This is where the messages are digested and other stuff is handled
-bool VisionBasedPositionService::processReceivedLmcpMessage(std::unique_ptr<uxas::communications::data::LmcpMessage> receivedLmcpMessage)
+bool VisionBasedPositioningService::processReceivedLmcpMessage(std::unique_ptr<uxas::communications::data::LmcpMessage> receivedLmcpMessage)
 {
     std::shared_ptr<avtas::lmcp::Object> messageObject = receivedLmcpMessage->m_object;
     
@@ -103,8 +108,21 @@ bool VisionBasedPositionService::processReceivedLmcpMessage(std::unique_ptr<uxas
     
     if(entityState && entityState->getID() == m_vehicleId)
     {
+        auto entityLocation = entityState->getLocation();
+        double latitude = entityLocation->getLatitude();
+        double longitude = entityLocation->getLongitude();
         //get IMU data for vision-based navigation algorithm?
         //Check out what the entity state contains in the MDMs (OpenUxAS/doc/LMCP/index.html and look for entitystate)
+        if(m_isTestMode)
+        {
+            //use the entity state location as the sent position message
+            positionMessage->setLatitude(latitude);
+            positionMessage->setLongitude(longitude);
+            positionMessage->setVarianceX(0.0);
+            positionMessage->setVarianceY(0.0);
+            positionMessage->setVarianceZ(0.0);
+            isReadyToSend = true;
+        }
     }
     
     if(isReadyToSend)
@@ -116,9 +134,10 @@ bool VisionBasedPositionService::processReceivedLmcpMessage(std::unique_ptr<uxas
         //positionMessage->setVarianceX(0.0);
         //positionMessage->setVarianceY(0.0);
         //positionMessage->setVarianceZ(0.0);
+        positionMessage->setID(m_vehicleId);
         
         //Send the message
-        //sendSharedLmcpObjectBroadcastMessage(positionMessage);
+        sendSharedLmcpObjectBroadcastMessage(positionMessage);
     }
     
     

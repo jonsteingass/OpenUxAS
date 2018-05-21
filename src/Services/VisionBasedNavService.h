@@ -41,11 +41,10 @@ namespace uxas {
 
          *  
          * 
-         * Configuration String: <Service Type="VisionBasedNavService" VehicleID="0" IsTestMode="False" MinWaypointDistance="150" LoiterRadius="350"/>
+         * Configuration String: <Service Type="VisionBasedNavService" VehicleID="0" MinWaypointDistance="150" LoiterRadius="350"/>
          *
          * Parameters
          *  - VehicleID: when non-zero only vision based navigation will be performed on that vehicle when a condition is evaluated
-         *  - IsTestMode: determines whether the service will use the entity states as vehicle location or OU's vision based positioning location
          *  - MinWaypointDistance: The minimum distance between the vehicle in meters and the waypoint before switching targeting the next waypoint
          *  - LoiterRadius: The loiter radius for the first point outside of the GPS denied zone (will loiter there until new task starts up)
          * 
@@ -264,20 +263,17 @@ namespace uxas {
 
             /* \brief Vehicle ID for which vision based nav is enabled*/
             int64_t m_vehicleId{ 0 };
-
-            /* \brief A bool that indicates where the lat long of the vehicle come from.
-             True indicates from the vision based nav algorithm
-             False indicates from the entity state*/
-            bool m_isTestMode{false};
             
             /* \brief The loiter radius in meters for the last waypoint [m]*/
             float m_loiterRadius{304.8};
             
+            /* \brief Flag to determine if in GPS denied zone or not. 
+             * Set to true using entity states.
+             * Set to false using VisionBasedPosition*/
+            bool m_isInGpsDeniedZone{false};
+            
             /* \brief The minimum distance from the waypoint before switching to the next waypoint in the waypoint list [m]*/
             double m_minWaypointDistance{20.0};
-            
-            /* \brief Indicates whether the vehicle is in a gps denied zone or not.*/
-            bool m_isInGpsDeniedZone{false};
             
             /* \brief The target waypoint for the loiter leash*/
             afrl::cmasi::Waypoint m_currentWaypoint;
@@ -289,6 +285,7 @@ namespace uxas {
             NOTE: Currently implementing single GPS denied zone*/
             VisiLibity::Polygon m_GpsDeniedPolygon = VisiLibity::Polygon();
 
+            
         };
 
     } //namespace service

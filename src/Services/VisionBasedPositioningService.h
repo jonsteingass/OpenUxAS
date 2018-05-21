@@ -8,14 +8,14 @@
 // ===============================================================================
 
 /* 
- * File:   VisionBasedPositionService.h
- * Author: steve
+ * File:   VisionBasedPositioningService.h
+ * Author: Jon
  *
  * Created on March 17, 2017, 5:55 PM
  */
 
-#ifndef UXAS_VISIONBASEDPOSITIONSERVICE_H
-#define UXAS_VISIONBASEDPOSITIONSERVICE_H
+#ifndef UXAS_VISIONBASEDPOSITIONINGSERVICE_H
+#define UXAS_VISIONBASEDPOSITIONINGSERVICE_H
 
 
 
@@ -26,27 +26,10 @@
 namespace uxas {
     namespace service {
 
-        /*! \class VisionBasedPositionService
-            \brief This is a basic service that can be used as a template when 
-         * constructing new services.
-
+        /*! \class VisionBasedPositioningService
+            \brief This service sends vision based position messages, which are processed by the vision based nav service
          * 
-         * 
-         *  @par To add a new service:
-         * <ul style="padding-left:1em;margin-left:0">
-         * <li>Make copies of the source and header files of this template.</li>
-         * <li>Search for the string VisionBasedPositionService and Replace it with the new 
-         * service name.</li>
-         * <li>Change the unique include guard entries, in the header file, i.e. 
-         * "UXAS_VISIONBASEDPOSITIONSERVICE_H" to match the new service name</li>
-         * <li> include the new service header file in ServiceManager.cpp</li>
-         * <li> add a dummy instance of the new service in ServiceManager.cpp, e.g.
-         * {auto svc = uxas::stduxas::make_unique<uxas::service::MyNewService>();} 
-         * Note: this is required to link the new service in when building UxAS</li>
-         *  
-         * </ul> @n
-         * 
-         * Configuration String: <Service Type="VisionBasedPositionService" VehicleId="0" />
+         * Configuration String: <Service Type="VisionBasedPositionService" VehicleId="0" IsTestMode="false" />
          * 
          * Options:
          *  - VehicleId - The Id of the vehicle to be sent in the VisionBasedPosition message. Used to only use entity state of vehicle navigating
@@ -112,7 +95,7 @@ namespace uxas {
          * 
          */
 
-        class VisionBasedPositionService : public ServiceBase {
+        class VisionBasedPositioningService : public ServiceBase {
         public:
 
             /** \brief This string is used to identify this service in XML configuration
@@ -120,7 +103,7 @@ namespace uxas {
              * service registry and used to create new instances of this service. */
             static const std::string&
             s_typeName() {
-                static std::string s_string("VisionBasedPositionService");
+                static std::string s_string("VisionBasedPositioningService");
                 return (s_string);
             };
 
@@ -141,24 +124,24 @@ namespace uxas {
 
             static ServiceBase*
             create() {
-                return new VisionBasedPositionService;
+                return new VisionBasedPositioningService;
             };
 
-            VisionBasedPositionService();
+            VisionBasedPositioningService();
 
             virtual
-            ~VisionBasedPositionService();
+            ~VisionBasedPositioningService();
 
         private:
 
             static
-            ServiceBase::CreationRegistrar<VisionBasedPositionService> s_registrar;
+            ServiceBase::CreationRegistrar<VisionBasedPositioningService> s_registrar;
 
             /** brief Copy construction not permitted */
-            VisionBasedPositionService(VisionBasedPositionService const&) = delete;
+            VisionBasedPositioningService(VisionBasedPositioningService const&) = delete;
 
             /** brief Copy assignment operation not permitted */
-            void operator=(VisionBasedPositionService const&) = delete;
+            void operator=(VisionBasedPositioningService const&) = delete;
 
             bool
             configure(const pugi::xml_node& serviceXmlNode) override;
@@ -178,10 +161,11 @@ namespace uxas {
 
         private:
           int m_vehicleId{0};  
+          bool m_isTestMode{false};
         };
 
     }; //namespace service
 }; //namespace uxas
 
-#endif /* UXAS_VISIONBASEDPOSITIONSERVICE_H */
+#endif /* UXAS_VISIONBASEDPOSITIONINGSERVICE_H */
 

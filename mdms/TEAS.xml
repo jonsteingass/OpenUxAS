@@ -60,12 +60,14 @@
 
 	<!--Describes the calculated position of the vehicle-->
 	<Struct Name="VisionBasedPosition" Extends="Location3D" Series="CMASI">
+		<!--A unique ID for this entity. IDs should be greater than zero-->
+		<Field Name="ID" Type="int64" Default="0" Units="None"/>
 		<!--Describes the varaince in the body x direction (positive out nose)-->
-		<Field Name="VarianceX"	Type="real32" Default="0"/>
+		<Field Name="VarianceX"	Type="real32" Default="0" Units="meter"/>
 		<!--Describes the variance in the body y direction (positive out right wing) -->
-		<Field Name="VarianceY" Type="real32" Default="0"/>
+		<Field Name="VarianceY" Type="real32" Default="0" Units="meter"/>
 		<!--Describes the variance in the body z direction (positive downward) -->
-		<Field Name="VarianceZ" Type="real32" Default="0"/>
+		<Field Name="VarianceZ" Type="real32" Default="0" Units="meter"/>
 	</Struct>
     </StructList>
 </MDM>

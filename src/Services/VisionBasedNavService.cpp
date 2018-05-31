@@ -13,7 +13,7 @@
  *
  * Created on March 17, 2017, 5:55 PM
  *
- * <Service Type="VisionBasedNavService" />
+ * <Service Type="VisionBasedNavService" VehicleID="0" MinWaypointDistance="150" LoiterRadius="350"/>
  * 
  */
 //this service
@@ -122,7 +122,7 @@ namespace uxas // uxas::
 
             if (entityState && entityState->getID() == m_vehicleId) //when an entity state is received, check if within GPS Denied Zone, if it is then set stuff for vehicle safe heading action and send message
             {
-                //check if vehicle is in GPS denied zone
+                //check if vehicle is in GPS denied zone//
 
                 //first get lat long
                 auto entityLocation = entityState->getLocation();
@@ -136,7 +136,7 @@ namespace uxas // uxas::
                else{
                    if(m_isInGpsDeniedZone)
                    {
-                       //just exited gps denied zone
+                       //just exited gps denied zone//
                        std::cout << "Vehicle [" << m_vehicleId << "] exited the GPS denied zone" << std::endl;
                         m_isInGpsDeniedZone = false;
                         
@@ -145,19 +145,25 @@ namespace uxas // uxas::
                    }
                }
 
-            } else if (gpsDeniedZone) //when a gps denied zone is received, convert to polygon and save as member
+            }
+            
+            else if (gpsDeniedZone) //when a gps denied zone is received, convert to polygon and save as member
             {
-                //make polygon from gpsDeniedZone
+                //make polygon from gpsDeniedZone//
                 std::cout << "Vision based nav service received a gps denied zone" << std::endl;
                 afrl::cmasi::AbstractGeometry *gpsGeo = gpsDeniedZone->getBoundary();
                 m_GpsDeniedPolygon = fromAbstractGeometry(gpsGeo); //get polygon from boundary of the GpsDeniedZone
-            } else if (missionCommand) {
-                //assign waypoints from mission command
+            }
+            
+            else if (missionCommand) {
+                //assign waypoints from mission command//
                 std::cout << "NEW MISSION COMMAND RECEIVED" << std::endl;
                 addWaypointsFromMissionCommandToWaypointList(*missionCommand);
+                
+                
             } else if(visionBasedPosition && m_isInGpsDeniedZone && visionBasedPosition->getID() == m_vehicleId)
             {
-                //navigate with the vision based position message if true location (entity state) showed the vehicle is within gps denied zone.
+                //navigate with the vision based position message if true location (entity state) showed the vehicle is within gps denied zone//
                 
                 double latitude = visionBasedPosition->getLatitude();
                 double longitude = visionBasedPosition->getLongitude();
@@ -176,14 +182,6 @@ namespace uxas // uxas::
                         desiredHeading = angleToNextWaypoint(latitude, longitude);
                         std::cout << "The desired heading angle is: " << desiredHeading << std::endl;
                         isReadyToSend = true;
-                    }
-                    else
-                    {
-                        std::cout << "Just left the GPS denied zone" << std::endl;
-                        m_isInGpsDeniedZone = false;
-                        
-                        //send loiter action at the current waypoint when vehicle exits gps denied zone
-                        sendLoiterAction(m_currentWaypoint);
                     }
                 }
             }

@@ -90,21 +90,21 @@ namespace uxas // uxas::
 
         bool VisionBasedNavService::initialize() {
             // perform any required initialization before the service is started
-            std::cout << "*** INITIALIZING:: Service[" << s_typeName() << "] Service Id[" << m_serviceId << "] with working directory [" << m_workDirectoryName << "] *** " << std::endl;
+            //std::cout << "*** INITIALIZING:: Service[" << s_typeName() << "] Service Id[" << m_serviceId << "] with working directory [" << m_workDirectoryName << "] *** " << std::endl;
 
             return (true);
         }
 
         bool VisionBasedNavService::start() {
             // perform any actions required at the time the service starts
-            std::cout << "*** STARTING:: Service[" << s_typeName() << "] Service Id[" << m_serviceId << "] with working directory [" << m_workDirectoryName << "] *** " << std::endl;
+            //std::cout << "*** STARTING:: Service[" << s_typeName() << "] Service Id[" << m_serviceId << "] with working directory [" << m_workDirectoryName << "] *** " << std::endl;
 
             return (true);
         };
 
         bool VisionBasedNavService::terminate() {
             // perform any action required during service termination, before destructor is called.
-            std::cout << "*** TERMINATING:: Service[" << s_typeName() << "] Service Id[" << m_serviceId << "] with working directory [" << m_workDirectoryName << "] *** " << std::endl;
+            //std::cout << "*** TERMINATING:: Service[" << s_typeName() << "] Service Id[" << m_serviceId << "] with working directory [" << m_workDirectoryName << "] *** " << std::endl;
 
             return (true);
         }
@@ -137,7 +137,7 @@ namespace uxas // uxas::
                    if(m_isInGpsDeniedZone)
                    {
                        //just exited gps denied zone//
-                       std::cout << "Vehicle [" << m_vehicleId << "] exited the GPS denied zone" << std::endl;
+                       //std::cout << "Vehicle [" << m_vehicleId << "] exited the GPS denied zone" << std::endl;
                         m_isInGpsDeniedZone = false;
                         
                         //send loiter action at the current waypoint when vehicle exits gps denied zone
@@ -150,14 +150,14 @@ namespace uxas // uxas::
             else if (gpsDeniedZone) //when a gps denied zone is received, convert to polygon and save as member
             {
                 //make polygon from gpsDeniedZone//
-                std::cout << "Vision based nav service received a gps denied zone" << std::endl;
+                //std::cout << "Vision based nav service received a gps denied zone" << std::endl;
                 afrl::cmasi::AbstractGeometry *gpsGeo = gpsDeniedZone->getBoundary();
                 m_GpsDeniedPolygon = fromAbstractGeometry(gpsGeo); //get polygon from boundary of the GpsDeniedZone
             }
             
             else if (missionCommand) {
                 //assign waypoints from mission command//
-                std::cout << "NEW MISSION COMMAND RECEIVED" << std::endl;
+                //std::cout << "NEW MISSION COMMAND RECEIVED" << std::endl;
                 addWaypointsFromMissionCommandToWaypointList(*missionCommand);
                 
                 
@@ -173,14 +173,14 @@ namespace uxas // uxas::
                 {
                     auto distance = distanceToNextWaypoint(latitude, longitude);
 
-                    std::cout << "The current distance is: " << distance << "\nThe min distance is: " << m_minWaypointDistance << std::endl;
+                    //std::cout << "The current distance is: " << distance << "\nThe min distance is: " << m_minWaypointDistance << std::endl;
                     if (distance <= m_minWaypointDistance) {
                         m_currentWaypoint = getNextWaypointWithWaypointNumber(m_currentWaypoint.getNextWaypoint());
                     }
                     if(isInGpsDeniedZone(latitude, longitude))
                     {
                         desiredHeading = angleToNextWaypoint(latitude, longitude);
-                        std::cout << "The desired heading angle is: " << desiredHeading << std::endl;
+                        //std::cout << "The desired heading angle is: " << desiredHeading << std::endl;
                         isReadyToSend = true;
                     }
                 }
@@ -188,7 +188,7 @@ namespace uxas // uxas::
 
             //send a safe heading action when ready
             if (isReadyToSend) {
-                std::cout << "Sending a safe heading action for vehicle [" << m_vehicleId << "] at heading [" << desiredHeading << "]" << std::endl;
+                //std::cout << "Sending a safe heading action for vehicle [" << m_vehicleId << "] at heading [" << desiredHeading << "]" << std::endl;
 
                 // send out a safe heading action that will be handled by the LoiterLeash service
                 auto safeHeadingAction = std::shared_ptr<uxas::messages::uxnative::SafeHeadingAction>(new uxas::messages::uxnative::SafeHeadingAction());
@@ -317,11 +317,11 @@ namespace uxas // uxas::
             double north, east;
             flatEarth.ConvertLatLong_degToNorthEast_m(vehicleLatitude, vehicleLongitude, north, east);
             VisiLibity::Point vehicleLocation = VisiLibity::Point(east, north);
-            std::cout << "The first points coordinates are:\n\tEast: " << east << "\n\tNorth: " << north << std::endl;
+            //std::cout << "The first points coordinates are:\n\tEast: " << east << "\n\tNorth: " << north << std::endl;
 
             flatEarth.ConvertLatLong_degToNorthEast_m(m_currentWaypoint.getLatitude(), m_currentWaypoint.getLongitude(), north, east);
             VisiLibity::Point waypointLocation = VisiLibity::Point(east, north);
-            std::cout << "The second points coordinates are:\n\tEast " << east << "\n\tNorth: " << north << std::endl;
+            //std::cout << "The second points coordinates are:\n\tEast " << east << "\n\tNorth: " << north << std::endl;
             
             return sqrt(pow(vehicleLocation.x() - waypointLocation.x(), 2) + pow(vehicleLocation.y() - waypointLocation.y(), 2));
         }
@@ -341,7 +341,7 @@ namespace uxas // uxas::
             double waypointLat = m_currentWaypoint.getLatitude();
             double waypointLong = m_currentWaypoint.getLongitude();
 
-            std::cout << "Moving to waypoint at: \n\tLat: " << waypointLat << "\n\tLong: " << waypointLong << std::endl;
+            //std::cout << "Moving to waypoint at: \n\tLat: " << waypointLat << "\n\tLong: " << waypointLong << std::endl;
 
             //create next waypoint coordinate
             flatEarth.ConvertLatLong_degToNorthEast_m(m_currentWaypoint.getLatitude(), m_currentWaypoint.getLongitude(), north, east);
@@ -353,11 +353,11 @@ namespace uxas // uxas::
             /* ccw is positive for the angle of separation. subtract this from 360 to get the
              * bearing angle with respect to true north where cw is positive (desired heading) */
             double desiredHeading = 360 - (n_Const::c_Convert::toDegrees(angleOfSeparation.get()));
-            std::cout << "=================================================" << std::endl;
+            /*std::cout << "=================================================" << std::endl;
             std::cout << "-------------------------------------------------" << std::endl;
             std::cout << "The angle is: " << desiredHeading << std::endl;
             std::cout << "-------------------------------------------------" << std::endl;
-            std::cout << "=================================================" << std::endl;
+            std::cout << "=================================================" << std::endl;*/
 
             return desiredHeading;
 
@@ -372,11 +372,11 @@ namespace uxas // uxas::
             {
                 nextWaypoint = &m_currentWaypoint;
             }
-            std::cout << "====================================================================="<< std::endl;
+            /*std::cout << "====================================================================="<< std::endl;
             std::cout << "====================================================================="<< std::endl;
             std::cout << "The next waypoint's location is:\n\tLatitude: " << nextWaypoint->getLatitude() << "\n\tLongitude: " << nextWaypoint->getLongitude() << std::endl;
             std::cout << "====================================================================="<< std::endl;
-            std::cout << "====================================================================="<< std::endl;
+            std::cout << "====================================================================="<< std::endl;*/
 
             return *nextWaypoint;
         }
@@ -423,7 +423,7 @@ namespace uxas // uxas::
                     {
                         m_waypointList.push_back(currentWaypoint->clone());
                         //print the last waypoint's data
-                        std::cout << "The last waypoints data: \n\tLatitude: " << currentWaypoint->getLatitude() << "\n\tLongitude: " << currentWaypoint->getLongitude() << std::endl;
+                        //std::cout << "The last waypoints data: \n\tLatitude: " << currentWaypoint->getLatitude() << "\n\tLongitude: " << currentWaypoint->getLongitude() << std::endl;
                     }
                 }
                 
@@ -435,11 +435,11 @@ namespace uxas // uxas::
                 }
             }
             //print the length of a vector:
-            std::cout << "------------------------------------------" << std::endl;
+            /*std::cout << "------------------------------------------" << std::endl;
             std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
             std::cout << "Waypoints added from mission command: \n\t" << m_waypointList.size() << std::endl;
             std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;            
-            std::cout << "------------------------------------------" << std::endl;
+            std::cout << "------------------------------------------" << std::endl;*/
         }
 
 

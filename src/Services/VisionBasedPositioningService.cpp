@@ -74,7 +74,7 @@ bool VisionBasedPositioningService::configure(const pugi::xml_node& ndComponent)
 bool VisionBasedPositioningService::initialize()
 {
     // perform any required initialization before the service is started
-    std::cout << "*** INITIALIZING:: Service[" << s_typeName() << "] Service Id[" << m_serviceId << "] with working directory [" << m_workDirectoryName << "] *** " << std::endl;
+    //std::cout << "*** INITIALIZING:: Service[" << s_typeName() << "] Service Id[" << m_serviceId << "] with working directory [" << m_workDirectoryName << "] *** " << std::endl;
     
     return (true);
 }
@@ -83,7 +83,7 @@ bool VisionBasedPositioningService::initialize()
 bool VisionBasedPositioningService::start()
 {
     // perform any actions required at the time the service starts
-    std::cout << "*** STARTING:: Service[" << s_typeName() << "] Service Id[" << m_serviceId << "] with working directory [" << m_workDirectoryName << "] *** " << std::endl;
+    //std::cout << "*** STARTING:: Service[" << s_typeName() << "] Service Id[" << m_serviceId << "] with working directory [" << m_workDirectoryName << "] *** " << std::endl;
     
     return (true);
 };
@@ -92,7 +92,7 @@ bool VisionBasedPositioningService::start()
 bool VisionBasedPositioningService::terminate()
 {
     // perform any action required during service termination, before destructor is called.
-    std::cout << "*** TERMINATING:: Service[" << s_typeName() << "] Service Id[" << m_serviceId << "] with working directory [" << m_workDirectoryName << "] *** " << std::endl;
+    //std::cout << "*** TERMINATING:: Service[" << s_typeName() << "] Service Id[" << m_serviceId << "] with working directory [" << m_workDirectoryName << "] *** " << std::endl;
     
     return (true);
 }

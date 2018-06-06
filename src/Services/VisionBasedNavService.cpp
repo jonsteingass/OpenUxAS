@@ -338,10 +338,9 @@ namespace uxas // uxas::
             north = north + 5000;
             VisiLibity::Point northLocation = VisiLibity::Point(east, north);
 
-            double waypointLat = m_currentWaypoint.getLatitude();
+            /*double waypointLat = m_currentWaypoint.getLatitude();
             double waypointLong = m_currentWaypoint.getLongitude();
-
-            //std::cout << "Moving to waypoint at: \n\tLat: " << waypointLat << "\n\tLong: " << waypointLong << std::endl;
+            std::cout << "Moving to waypoint at: \n\tLat: " << waypointLat << "\n\tLong: " << waypointLong << std::endl;*/
 
             //create next waypoint coordinate
             flatEarth.ConvertLatLong_degToNorthEast_m(m_currentWaypoint.getLatitude(), m_currentWaypoint.getLongitude(), north, east);

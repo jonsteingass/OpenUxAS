@@ -1,6 +1,6 @@
 # GPS Denied Example
 
-This is an example of running UxAS service that communicates to the Amase simulation in order test the vision based navigation service.
+This is an example of running a UxAS service that communicates to the Amase simulation in order test the vision based navigation service.
 ## Files:
 
 * `cfg_GpsDenied_LeftTurn.xml` - This is a UxAS config file where a vehicle turns left in the GPS denied zone.
@@ -28,7 +28,7 @@ This is an example of running UxAS service that communicates to the Amase simula
 
 ### What Happens?
 * When the Amase simulation starts, a UAV will be initialized and begin flying south at latitude 39.3446361111, longitude -86.03.
-* .3 seconds after UxAS starts, the GPS Denied zone will appear as a magenta square north of the UAV
+* .3 seconds after UxAS starts, the GPS Denied zone will appear as a magenta square north-west of UAV 400
 * 1 second after UxAS starts, the vehicle will navigate and begin to lotier around a point located at latitude 39.344629275, longitude -86.038240601.
 * 3 minutes and 50 second in, the vehicle will be command to a waypoint within the gps denied zone at latitude 39.344627567, longitude -86.060963844, followed by another point outside of the GPS denied zone.
-* Once the vehicle exits the GPS denied zone, it will be send a request to loiter around the first waypoint outside of the GPS denied zone from the VisionBasedNavService
+* Once the vehicle exits the GPS denied zone, it will be send a request to loiter around the first waypoint outside of the GPS denied zone

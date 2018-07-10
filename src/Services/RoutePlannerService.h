@@ -137,6 +137,8 @@ private:
     void UpdateRegions(std::shared_ptr<avtas::lmcp::Object>);
     void BuildVehicleSpecificRegion(std::shared_ptr<afrl::cmasi::OperatingRegion>, int64_t, afrl::cmasi::AbstractGeometry*);
     bool LinearizeBoundary(afrl::cmasi::AbstractGeometry*, VisiLibity::Polygon&);
+    void calculateTurnRadius( const std::shared_ptr<afrl::cmasi::AirVehicleConfiguration>& airVehicleConfiguration);
+
 
     // storage
     std::unordered_map<int64_t, std::shared_ptr<afrl::cmasi::EntityState> > m_entityStates;
@@ -148,7 +150,8 @@ private:
     std::unordered_set<int64_t> m_groundVehicles;
     std::unordered_set<int64_t> m_surfaceVehicles;
     std::unordered_map<int64_t, std::shared_ptr<afrl::impact::WaterZone> > m_waterZones;
-
+    std::unordered_map<int64_t, double> m_turnRadii;
+    
     // environments for all vehicles that will have plans
     // [operating region id], [vehicle id], <environment/graph>
     std::unordered_map<int64_t, std::unordered_map<int64_t, std::shared_ptr<VisiLibity::Environment> > > m_environments;

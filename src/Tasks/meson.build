@@ -20,6 +20,7 @@ srcs_tasks = [
   'TaskManagerService.cpp',
   'TaskServiceBase.cpp',
   'TaskTrackerService.cpp',
+  'DynamicTaskServiceBase.cpp'
 ]
 
 incs_tasks = [
@@ -36,7 +37,7 @@ incs_tasks = [
 ]
 
 if get_option('afrl_internal')
-  incs_tasks += [incs_tasks_internal]
+  incs_tasks += incs_tasks_internal
 else
   srcs_tasks_internal = files()
 endif

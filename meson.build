@@ -27,6 +27,25 @@ elif os == 'windows'
   link_args += []
 endif
 
+# handle boost carefully, require version >= 1.67
+if os == 'windows'
+  # require windows install of boost, no fallback
+  dep_boost = dependency(
+    'boost',
+    modules: ['date_time', 'filesystem', 'regex', 'system'],
+  )
+elif get_option('force_dep_download')
+  dep_boost = subproject('boost').get_variable('dep')
+elif not cpp.has_header('boost/contract.hpp')
+  dep_boost = subproject('boost').get_variable('dep')
+else
+  dep_boost = dependency(
+    'boost',
+    modules: ['date_time', 'filesystem', 'regex', 'system'],
+    fallback: ['boost', 'dep'],
+  )
+endif
+
 if get_option('force_dep_download')
   dep_zeromq    = subproject('zeromq').get_variable('dep')
   dep_czmq      = subproject('czmq').get_variable('dep')
@@ -95,13 +114,6 @@ else
   )
 endif
 
-# handle boost carefully
-dep_boost = dependency(
-  'boost',
-  modules: ['date_time', 'filesystem', 'regex', 'system'],
-  fallback: ['boost', 'dep'],
-)
-
 # https://github.com/mikalhart/TinyGPS
 # The TinyGPS repo captured by UxAS does not seem to be available.
 # The repo contains *only* version 13, while UxAS uses what appears
@@ -114,6 +126,10 @@ dep_serial = subproject('serial-1.2.1').get_variable('dep')
 # https://github.com/zeux/pugixml
 # No versions of this pugixml repo are compatible.
 dep_pugixml = subproject('PugiXML').get_variable('dep')
+
+if get_option('afrl_internal')
+  add_project_arguments('-DAFRL_INTERNAL_ENABLED', language: ['c', 'cpp'])
+endif
 
 if get_option('afrl_internal')
   subdir('UxAS-afrl_internal')
@@ -171,36 +187,10 @@ endif
 # creates src/Includes/config.h
 subdir('src/Includes')
 
-glu_deps = []
-# OpenGL, specifically the GLU library
-if os == 'darwin'
-  # newer MacOS splits out GLU into a separate framework, but we can't
-  # ask Meson for the version in order to handle things differently
-  glu_deps += [dependency('gl')]
-  glu_deps += [dependency('glu', required: false)]
-elif os.startswith('linux')
-  if not (target_machine.cpu_family() == 'arm')
-    glu_deps += [dependency('glu')]
-  endif
-elif os == 'windows'
-  glu_deps += [cpp.find_library('glu32')]
-endif
-
-# ensure that required glu functions are available
-# note: 'has_function' check cannot reach into windows c libraries
-glu_functions = ['gluNewTess', 'gluDeleteTess', 'gluErrorString']
-foreach fn : glu_functions
-  if os != 'windows' and not cpp.has_function(fn, dependencies: glu_deps)
-    error('GLU library functions not found')
-  endif
-endforeach
-deps += glu_deps
-
 if get_option('afrl_internal')
   deps += deps_internal
   link_args += link_args_internal
 endif
-
 
 executable(
   'uxas',
